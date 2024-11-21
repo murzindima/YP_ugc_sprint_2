@@ -2,7 +2,7 @@
 
 ## Repository Link
 
-https://github.com/IlyasDevelopment/ugc_sprint_1
+https://github.com/murzindima/ugc_sprint_1
 
 ## Running via gunicorn server with gevent
 ```bash

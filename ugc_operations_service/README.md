@@ -2,4 +2,4 @@
 
 ## Repository Link
 
-https://github.com/IlyasDevelopment/ugc_sprint_2
+https://github.com/murzindima/ugc_sprint_2

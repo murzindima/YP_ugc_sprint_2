@@ -71,4 +71,4 @@ Environment variables are already set in docker-compose.yml file.
 | API_BASE_PATH | string  | /api/v1               | API base path with version          |
 
 ## Repository Link:
-https://github.com/IlyasDevelopment/Async_API_sprint_2
+https://github.com/murzindima/Async_API_sprint_2

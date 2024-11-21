@@ -1,10 +1,10 @@
 # Sprint 9
 
-[![CI](https://github.com/IlyasDevelopment/ugc_sprint_2/actions/workflows/github-actions.yml/badge.svg)](https://github.com/IlyasDevelopment/ugc_sprint_2/actions/workflows/github-actions.yml)
+[![CI](https://github.com/murzindima/ugc_sprint_2/actions/workflows/github-actions.yml/badge.svg)](https://github.com/murzindima/ugc_sprint_2/actions/workflows/github-actions.yml)
 
 ## Repository Link
 
-https://github.com/IlyasDevelopment/ugc_sprint_2
+https://github.com/murzindima/ugc_sprint_2
 
 ## Description
 

@@ -35,7 +35,7 @@ backed by a robust PostgreSQL database and Redis for caching.
 #### Clone the repository
 
 ```shell
-git clone https://github.com/IlyasDevelopment/Auth_sprint_1.git
+git clone https://github.com/murzindima/Auth_sprint_1.git
 ```
 
 #### Poetry
