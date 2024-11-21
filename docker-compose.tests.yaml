@@ -1,0 +1,113 @@
+version: "3"
+
+x-auth-env: &auth-env
+  POSTGRES_USER: app
+  POSTGRES_PASSWORD: 123qwe
+  POSTGRES_DB: auth_database
+  POSTGRES_HOST: postgres-authdb
+  POSTGRES_PORT: 5432
+  POSTGRES_ECHO: "True"
+  REDIS_HOST: redis
+  OAUTH_CLIENT_ID: 123123
+  OAUTH_CLIENT_SECRET: 123123
+  OAUTH_REDIRECT_URI: http://auth-api:8080/api/v1/auth/login/oauth/yandex/callback
+  OAUTH_AUTH_SERVER: http://oauth2-server
+  OAUTH_RESOURCE_SERVER: http://resource-server
+  APP_ENABLE_TRACER: "False"
+
+x-auth-migrations-env: &auth-migrations-env
+  <<: *auth-env
+  RUN_CMD: migrations
+
+x-ugc-env: &ugc-env
+  JAEGER_ENABLE_TRACER: "False"
+  SENTRY_ENABLE_SDK: "False"
+  SENTRY_ENABLE_TRACING: "False"
+  APP_AUTHJWT_SECRET_KEY: secretsecret
+  MONGO_HOST: mongo
+  MONGO_USER: root
+  MONGO_PASSWORD: example
+
+x-ugc-tests-env: &ugc-tests-env
+  <<: *ugc-env
+  RUN_CMD: tests
+  AUTH_API_URL: http://auth-api/api/v1
+  UGC_API_URL: http://ugc-operations/api/v1
+
+x-mongo-env: &mongo-env
+  MONGO_INITDB_ROOT_USERNAME: root
+  MONGO_INITDB_ROOT_PASSWORD: example
+
+services:
+  nginx:
+    build: ugc_operations_service/nginx_tests
+    restart: always
+    networks:
+      default:
+        aliases:
+          - ugc-operations
+          - auth-api
+    depends_on:
+      - auth-service
+      - ugc-operations-service
+    expose:
+      - 80
+  
+  mongo:
+    image: mongo
+    environment:
+      <<: *mongo-env
+    expose:
+      - 27017
+
+  redis:
+    image: redis:7.2.3-alpine
+    expose:
+      - 6379
+
+  postgres-authdb:
+    image: postgres:15
+    environment:
+      <<: *auth-env
+    expose:
+      - 5432
+
+  auth-service:
+    build: auth_service
+    image: auth_service_spr9
+    environment:
+      <<: *auth-env
+    expose:
+      - 8000
+    depends_on:
+      - postgres-authdb
+      - redis
+
+  auth-service-migrations:
+    image: auth_service_spr9
+    environment:
+      <<: *auth-migrations-env
+    expose:
+      - 8000
+    depends_on:
+      - postgres-authdb
+      - redis
+
+  ugc-operations-service:
+    build: ugc_operations_service
+    image: ugc_operations_service_spr9
+    environment:
+      <<: *ugc-env
+    expose:
+      - 8000
+
+  ugc_tests:
+    image: ugc_operations_service_spr9
+    environment:
+      <<: *ugc-tests-env
+    depends_on:
+      - ugc-operations-service
+      - auth-service
+      - auth-service-migrations
+      - mongo
+      - redis

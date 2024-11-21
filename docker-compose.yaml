@@ -1,0 +1,214 @@
+version: "3"
+
+services:
+
+  nginx:
+    build: nginx
+    container_name: nginx_spr9
+    restart: always
+    volumes:
+      - admin_panel_static:/data/static
+      - ./tmp/logs/nginx/:/var/log/nginx/
+    ports:
+      - "8080:80"
+
+  elasticsearch:  # TODO: add another elastic in case of super machine
+    image: elasticsearch:8.10.2
+    container_name: elasticsearch_spr9
+    restart: always
+    environment:
+      - node.name=es01
+      - cluster.name=es-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+    deploy:
+      resources:
+        reservations:
+          cpus: '1'
+          memory: 1G
+        limits:
+          cpus: '1'
+          memory: 2G
+    expose:
+      - 9200
+
+  redis:
+    image: redis:7.2.3-alpine
+    container_name: redis_spr9
+    restart: always
+    expose:
+      - 6379
+
+  postgres-authdb:
+    image: postgres:15
+    container_name: postgres_authdb_spr9
+    restart: always
+    env_file: auth_service/.env
+    expose:
+      - 5432
+
+  postgres-moviesdb:
+    image: postgres:15
+    container_name: postgres_moviesdb_spr9
+    restart: always
+    env_file: content_delivery_service/.env
+    volumes:
+      - ./postgres_to_elastic_etl/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    expose:
+      - 5432
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.53
+    container_name: jaeger_spr9
+    restart: always
+    expose:
+      - 16686
+      - 6831/udp
+
+  etl:
+    build: postgres_to_elastic_etl
+    container_name: etl_spr9
+    restart: always
+    env_file: postgres_to_elastic_etl/.env
+    depends_on:
+      - postgres-moviesdb
+      - elasticsearch
+      - redis
+
+  content-delivery-service:
+    build: content_delivery_service
+    container_name: content_delivery_service_spr9
+    restart: always
+    env_file: content_delivery_service/.env
+    expose:
+      - 8000
+    depends_on:
+      - postgres-moviesdb
+      - elasticsearch
+      - redis
+      - etl
+    volumes:
+      - ./tmp/logs/content_delivery:/api/.venv/logs
+
+  auth-service:
+    build: auth_service
+    image: auth_service_spr9
+    container_name: auth_service_spr9
+    restart: always
+    env_file: auth_service/.env
+    expose:
+      - 8000
+    depends_on:
+      - postgres-authdb
+      - redis
+    volumes:
+      - ./tmp/logs/auth_service:/app/.venv/logs
+
+  admin-panel-service:
+    build: admin_panel_service
+    env_file: admin_panel_service/.env
+    volumes:
+      - admin_panel_static:/movies_admin/.venv/static
+    expose:
+      - 8000
+    depends_on:
+      - postgres-moviesdb
+
+  ugc-operations-service:
+    build: ugc_operations_service
+    image: ugc_operations_service_spr9
+    container_name: ugc_operations_service_spr9
+    restart: always
+    env_file: ugc_operations_service/.env
+    expose:
+      - 8000
+    volumes:
+      - ./tmp/logs/ugc_operations:/app/.venv/logs
+
+  ugc-service:
+    build: ugc_service
+    image: ugc_service_spr9
+    container_name: ugc_service_spr9
+    restart: always
+    env_file: ugc_service/.env
+    expose:
+      - 8000
+    volumes:
+      - ./tmp/logs/ugc_service:/api/.venv/logs
+
+  logstash:
+    image: logstash:8.10.2
+    depends_on:
+      - elasticsearch
+    environment:
+      XPACK_MONITORING_ENABLED: "false"
+      ES_HOST: "elasticsearch:9200"
+    expose:
+      - 5044/udp
+    volumes:
+      - ./ugc_operations_service/deploy/logstash.conf:/config/logstash.conf:ro
+      - ./tmp/logs/nginx/:/var/log/nginx/:ro
+    command: logstash -f /config/logstash.conf
+
+  kibana:
+    image: kibana:8.10.2
+    expose:
+      - 5601
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+  filebeat_services:
+    image: elastic/filebeat:8.10.2
+    volumes:
+      - ./tmp/logs:/var/log:ro
+      - ./ugc_operations_service/deploy/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
+    depends_on:
+      - ugc-operations-service
+      - nginx
+      - logstash
+      - elasticsearch
+      - kibana
+    links:
+      - logstash
+    command: [ "filebeat", "-e", "-strict.perms=false" ]
+
+  filebeat_nginx:
+    image: elastic/filebeat:8.10.2
+    volumes:
+      - ./tmp/logs/nginx:/var/log/nginx:ro
+      - ./ugc_operations_service/deploy/filebeat/filebeat_nginx.yml:/usr/share/filebeat/filebeat_nginx.yml
+    depends_on:
+      - ugc-operations-service
+      - nginx
+      - logstash
+      - elasticsearch
+      - kibana
+    links:
+      - logstash
+    command: [ "filebeat", "-e", "-strict.perms=false" ]
+  
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    expose:
+      - 27017
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+
+volumes:
+  admin_panel_pgdata:
+  admin_panel_static:

@@ -1,0 +1,23 @@
+filebeat.inputs:
+
+- type: filestream
+  id: ugs-operations-filestream
+  tags: ["ugc_operations"]
+  paths:
+    - /var/log/ugc_operations/*
+
+- type: filestream
+  id: auth-filestream
+  tags: ["auth_service"]
+  paths:
+    - /var/log/auth_service/*
+
+- type: filestream
+  id: content-delivery-filestream
+  tags: ["content_delivery"]
+  paths:
+    - var/log/content_delivery/*
+
+output.logstash:
+  enabled: true
+  hosts: ["logstash:5045"]

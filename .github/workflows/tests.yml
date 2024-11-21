@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+
+      - name: Run tests
+        run: docker-compose -f docker-compose.tests.yaml up --build --exit-code-from ugc_tests --abort-on-container-exit
+
+      - name: "telegram Notification"
+        uses: "appleboy/telegram-action@master"
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: 📦Repo ${{ github.repository }} 🚀Job ${{ github.job }} 🎋Ref ${{ github.ref_name }} 🧑🏼‍💻Triggered by ${{ github.actor }} 🤞Status ${{ job.status }}

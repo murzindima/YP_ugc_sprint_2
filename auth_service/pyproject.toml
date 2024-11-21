@@ -1,0 +1,77 @@
+[tool.poetry]
+name = "auth-sprint-1"
+version = "0.1.0"
+description = ""
+authors = ["Ilyas <Ilyas2707@yandex.ru>", "Dmitry Murzin <dima@murzin.life>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.100.1"
+uvicorn = "^0.25.0"
+sqlalchemy = "^2.0.25"
+alembic = "^1.13.1"
+redis = "^5.0.1"
+typer = "^0.9.0"
+passlib = "^1.7.4"
+werkzeug = "^3.0.1"
+pydantic = {extras = ["email"], version = "^2.5.3"}
+pydantic-settings = "^2.1.0"
+asyncpg = "^0.29.0"
+orjson = "^3.9.10"
+gunicorn = "^21.2.0"
+async-fastapi-jwt-auth = "^0.6.2"
+aiohttp = "^3.9.1"
+python-dotenv = "^1.0.1"
+opentelemetry-api = "^1.22.0"
+opentelemetry-sdk = "^1.22.0"
+opentelemetry-instrumentation-fastapi = "^0.43b0"
+opentelemetry-exporter-jaeger = "^1.21.0"
+yaidng = "^24.1.0"
+
+[tool.poetry.dev-dependencies]
+isort = "^5.13.0"
+wemake-python-styleguide = "^0.18.0"
+flake8 = "^7.0.0"
+flake8-annotations = "^3.0.1"
+flake8-bandit = "^4.1.1"
+flake8-bugbear = "^23.12.2"
+flake8-comprehensions = "^3.14.0"
+flake8-docstrings = "^1.7.0"
+flake8-eradicate = "^1.5.0"
+flake8-import-order = "^0.18.2"
+flake8-mutable = "^1.2.0"
+flake8-print = "^5.0.0"
+flake8-pytest-style = "^1.7.2"
+flake8-quotes = "^3.3.2"
+flake8-string-format = "^0.3.0"
+flake8-tidy-imports = "^4.10.0"
+flake8-todo = "^0.7"
+flake8-variables-names = "^0.0.6"
+flake8-walrus = "^1.2.0"
+mypy = "^1.8.0"
+pytest = "^7.4.3"
+pytest-asyncio = "^0.23.2"
+pytest-cov = "^4.1.0"
+pytest-sugar = "^0.9.7"
+ruff = "^0.1.9"
+black = "^23.12.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+extend-ignore = ["WPS332"]
+max-line-length = 120
+exclude = ["logger.py"]
+per-file-ignores = [
+  "__init__.py:D104",
+  "config.py:WPS432,D101,D106"
+]
+
+[tool.isort]
+line_length = 120
+
+[tool.black]
+line-length = 120

@@ -1,0 +1,66 @@
+[tool.poetry]
+name = "async-api-sprint-1-etl"
+version = "0.1.0"
+description = ""
+authors = ["Ilyas <Ilyas2707@yandex.ru>", "Dmitry Murzin <dima@murzin.life>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pydantic = "^2.5.2"
+pydantic-settings = "^2.1.0"
+fastapi = "^0.104.1"
+uvicorn = "^0.24.0.post1"
+orjson = "^3.9.10"
+redis = "^5.0.1"
+elasticsearch = "^8.11.0"
+psycopg-binary = "^3.1.14"
+psycopg = "^3.1.14"
+backoff = "^2.2.1"
+wait-for-it = "^2.2.2"
+
+[tool.poetry.dev-dependencies]
+isort = "^5.13.0"
+wemake-python-styleguide = "^0.18.0"
+flake8 = "^6.1.0"
+flake8-annotations = "^3.0.1"
+flake8-bandit = "^4.1.1"
+flake8-bugbear = "^23.12.2"
+flake8-comprehensions = "^3.14.0"
+flake8-docstrings = "^1.7.0"
+flake8-eradicate = "^1.5.0"
+flake8-import-order = "^0.18.2"
+flake8-mutable = "^1.2.0"
+flake8-print = "^5.0.0"
+flake8-pytest-style = "^1.7.2"
+flake8-quotes = "^3.3.2"
+flake8-string-format = "^0.3.0"
+flake8-tidy-imports = "^4.10.0"
+flake8-todo = "^0.7"
+flake8-variables-names = "^0.0.6"
+flake8-walrus = "^1.2.0"
+mypy = "^1.7.1"
+pytest = "^7.4.3"
+pytest-asyncio = "^0.23.2"
+pytest-cov = "^4.1.0"
+pytest-sugar = "^0.9.7"
+ruff = "^0.1.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+extend-ignore = ["WPS332"]
+max-line-length = 120
+exclude = ["logger.py"]
+per-file-ignores = [
+  "__init__.py:D104",
+  "config.py:WPS432,D101,D106"
+]
+
+[tool.isort]
+line_length = 120
+
+[tool.mypy]
+ignore_missing_imports = true

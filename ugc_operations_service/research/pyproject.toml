@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "research"
+version = "0.1.0"
+description = ""
+authors = ["Ilyas <Ilyas2707@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+motor = "^3.3.2"
+faker = "^24.0.0"
+asyncpg = "^0.29.0"
+python-dotenv = "^1.0.1"
+tqdm = "^4.66.2"
+matplotlib = "^3.8.3"
+
+[tool.poetry.dev-dependencies]
+isort = "^5.13.0"
+black = "^23.12.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+line_length = 120
+
+[tool.black]
+line-length = 120

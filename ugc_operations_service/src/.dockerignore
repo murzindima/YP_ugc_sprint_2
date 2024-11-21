@@ -1,0 +1,6 @@
+.git
+*.yml
+.gitignore
+.dockerignore
+*.py[co]
+Dockerfile*

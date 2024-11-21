@@ -1,0 +1,58 @@
+[tool.poetry]
+name = "ugc-sprint-2"
+version = "0.1.0"
+description = ""
+authors = ["Ilyas <Ilyas2707@yandex.ru>", "Dmitry Murzin <dima@murzin.life>", "Vladimir Lapp"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "0.110.0"
+uvicorn = "0.28.0"
+pydantic = "^2.6.4"
+pydantic-settings = "^2.2.1"
+orjson = "^3.9.10"
+gunicorn = "^21.2.0"
+async-fastapi-jwt-auth = "0.6.4"
+aiohttp = "^3.9.1"
+python-dotenv = "^1.0.1"
+opentelemetry-api = "^1.23.0"
+opentelemetry-sdk = "^1.23.0"
+opentelemetry-instrumentation-fastapi = "^0.44b0"
+opentelemetry-exporter-jaeger = "^1.21.0"
+pyjwt = "2.8.0"
+sentry-sdk = {extras = ["fastapi"], version = "^1.42.0"}
+motor = "^3.3.2"
+pydantic-mongo = "^2.1.2"
+
+[tool.poetry.dev-dependencies]
+isort = "^5.13.0"
+mypy = "^1.9.0"
+pytest = "^8.1.1"
+pytest-asyncio = "^0.23.2"
+pytest-cov = "^4.1.0"
+pytest-sugar = "^1.0.0"
+ruff = "^0.3.0"
+black = "^24.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[tool.isort]
+line_length = 120
+
+# [tool.flake8]
+# extend-ignore = ["WPS332"]
+# max-line-length = 120
+# exclude = ["logger.py"]
+# per-file-ignores = [
+#   "__init__.py:D104",
+#   "config.py:WPS432,D101,D106"
+# ]
+
+[tool.black]
+line-length = 120

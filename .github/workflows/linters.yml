@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  Linters:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.11, 3.12]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: ruff
+        run: |
+            pip install ruff==0.3.2
+            ruff check ugc_operations_service
+        if: always()
+
+      - name: "telegram Notification"
+        uses: "appleboy/telegram-action@master"
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: 📦Repo ${{ github.repository }} 🚀Job ${{ github.job }} 🎋Ref ${{ github.ref_name }} 🧑🏼‍💻Triggered by ${{ github.actor }} 🤞Status ${{ job.status }}
+
+  Formatters:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: [3.11, 3.12]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: black
+        run: |
+            pip install black==24.2.0
+            black --check .
+        if: always()
+
+      - name: "telegram Notification"
+        uses: "appleboy/telegram-action@master"
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          args: 📦Repo ${{ github.repository }} 🚀Job ${{ github.job }} 🎋Ref ${{ github.ref_name }} 🧑🏼‍💻Triggered by ${{ github.actor }} 🤞Status ${{ job.status }}

@@ -1,0 +1,8 @@
+.git
+tests/
+*.yml
+.gitignore
+.dockerignore
+*.py[co]
+Dockerfile*
+.env
